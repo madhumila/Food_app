@@ -2,14 +2,19 @@ import React, { useEffect, useState } from "react";
 // import food from "./food.jpg"
 import "./Main.css";
 import axios from "axios";
+import Details from "./Details";
+import { Link } from "react-router-dom";
 
 const Main = () => {
   const [recipes, setRecipes] = useState(null);
   const [search, setSearch] = useState("");
+  const [id, setId] = useState("");
   const handleChange = (e) => {
     setSearch(e.target.value);
   };
-
+//   const handleClick = (idvalue) => {
+//     setId(idvalue);
+//   };
   useEffect(() => {
     axios
       .get(`https://www.themealdb.com/api/json/v1/1/filter.php?i=${search}`)
@@ -17,10 +22,11 @@ const Main = () => {
         setRecipes(response.data.meals);
       });
   }, [search]);
-  const filteredData =recipes? recipes.filter((item) =>
-    item.strMeal.toLowerCase().includes(search.toLowerCase())
-  ):[];
-
+  const filteredData = recipes
+    ? recipes.filter((item) =>
+        item.strMeal.toLowerCase().includes(search.toLowerCase())
+      )
+    : [];
 
   return (
     <>
@@ -32,25 +38,26 @@ const Main = () => {
           value={search}
           onChange={handleChange}
         />
-        <button type="submit">
-          <i class="fa-solid fa-magnifying-glass"></i>
-        </button>
       </div>
       <h1 style={{ textAlign: "center" }}>Your Search Results:</h1>
 
       <div className="main">
         {filteredData.map((recipe) => {
           return (
-            <div
-              key={recipe.id}
-              className={`box ${recipe.id % 3 === 0 ? "first-in-row" : ""}`}
-            >
+            <div className={`box ${recipe.id % 3 === 0 ? "first-in-row" : ""}`}>
               <img className="image" src={recipe.strMealThumb} alt="food" />
               <h2>{recipe.strMeal}</h2>
-              <button>Get recipe</button>
+              <Link to={`/details/${recipe.idMeal}`}>
+              <button 
+            //   onClick={() => handleClick(recipe.idMeal)}
+            >
+                Get recipe
+              </button>
+              </Link>
             </div>
           );
         })}
+        {/* {setId && <Details id={id} />} */}
       </div>
     </>
   );
